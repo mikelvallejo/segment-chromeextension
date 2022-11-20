@@ -25,5 +25,6 @@
 		"background.js"
 	],
 	"persistent": true
-  }
+  },
+"devtools_page": "devtools_index.html"
 }
