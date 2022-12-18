@@ -22,9 +22,10 @@
     "128": "logo.png"
   },
   "background": {
-    "scripts": [
-      "./js/background.js"
-    ],
-    "persistent": true
-  }
+	"scripts": [
+		"background.js"
+	],
+	"persistent": true
+  },
+"devtools_page": "devtools_index.html"
 }
