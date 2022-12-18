@@ -1,0 +1,1 @@
+chrome.devtools.panels.create('Segment Events', null, 'popup.html', null)

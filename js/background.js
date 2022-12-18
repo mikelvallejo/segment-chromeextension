@@ -1,13 +1,13 @@
 var trackedEvents = new Array();
-var apiDomainDefault = 'api.segment.io,cdn.dreamdata.cloud';
+var apiDomainDefault = 'api.segment.io,cdn.dreamdata.cloud, sgmt-api.qonto.com, sgmt-cdn.qonto.com';
 var apiDomain = apiDomainDefault;
 
-chrome.storage.local.get(['segment_api_domain'], function(result) {
+chrome.storage.local.get(['segment_api_domain'], function (result) {
 	apiDomain = result.segment_api_domain || apiDomainDefault;
 })
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-	if(namespace === 'local' && changes && changes.segment_api_domain) {
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+	if (namespace === 'local' && changes && changes.segment_api_domain) {
 		apiDomain = changes.segment_api_domain.newValue || apiDomainDefault;
 	}
 });
@@ -41,10 +41,10 @@ function addEvent(event) {
 	chrome.runtime.sendMessage({ type: "new_event" });
 }
 
-function updateTrackedEventsForTab(tabId,port) {
+function updateTrackedEventsForTab(tabId, port) {
 	var sendEvents = [];
 
-	for(var i=0;i<trackedEvents.length;i++) {
+	for (var i = 0; i < trackedEvents.length; i++) {
 		if (trackedEvents[i].tabId == tabId) {
 			sendEvents.push(trackedEvents[i]);
 		}
@@ -56,9 +56,9 @@ function updateTrackedEventsForTab(tabId,port) {
 	});
 }
 
-function clearTrackedEventsForTab(tabId,port) {
+function clearTrackedEventsForTab(tabId, port) {
 	var newTrackedEvents = [];
-	for(var i=0;i<trackedEvents.length;i++) {
+	for (var i = 0; i < trackedEvents.length; i++) {
 		if (trackedEvents[i].tabId != tabId) {
 			newTrackedEvents.push(trackedEvents[i]);
 		}
@@ -70,11 +70,11 @@ chrome.extension.onConnect.addListener((port) => {
 	port.onMessage.addListener((msg) => {
 		var tabId = msg.tabId;
 		if (msg.type == 'update') {
-			updateTrackedEventsForTab(tabId,port);
+			updateTrackedEventsForTab(tabId, port);
 		}
 		else if (msg.type == 'clear') {
-			clearTrackedEventsForTab(tabId,port);
-			updateTrackedEventsForTab(tabId,port);
+			clearTrackedEventsForTab(tabId, port);
+			updateTrackedEventsForTab(tabId, port);
 		}
 	});
 });
@@ -93,7 +93,7 @@ function onOwnServerResponse(url, callback) {
 }
 
 function eventTypeToName(eventType) {
-	switch(eventType) {
+	switch (eventType) {
 		case 'identify':
 			return 'Identify'
 		case 'pageLoad':
@@ -106,7 +106,7 @@ function eventTypeToName(eventType) {
 chrome.webRequest.onBeforeRequest.addListener(
 	(details) => {
 		if (isSegmentApiCall(details.url)) {
-			var postedString = String.fromCharCode.apply(null,new Uint8Array(details.requestBody.raw[0].bytes));
+			var postedString = String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes));
 
 			var rawEvent = JSON.parse(postedString);
 
@@ -140,11 +140,12 @@ chrome.webRequest.onBeforeRequest.addListener(
 		}
 	},
 	{
-	urls: [
-		"https://*/*",
-		"http://*/*"
-	]},
-	['blocking','requestBody']
+		urls: [
+			"https://*/*",
+			"http://*/*"
+		]
+	},
+	['blocking', 'requestBody']
 );
 
 chrome.webRequest.onHeadersReceived.addListener(
@@ -171,9 +172,10 @@ chrome.webRequest.onHeadersReceived.addListener(
 		})
 	},
 	{
-	urls: [
-		"https://*/*",
-		"http://*/*"
-	]},
+		urls: [
+			"https://*/*",
+			"http://*/*"
+		]
+	},
 	['responseHeaders']
 );
